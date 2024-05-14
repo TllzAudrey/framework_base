@@ -55,9 +55,44 @@ class UserModel{
         $this->sql = substr($this->sql, 0, -2);
         $values = substr($values, 0, -2);
         $this->sql .= ") VALUES(".$values.")";
-
+        //echo $this->sql;
         $result = $this->fetch();
         var_dump($result);
+        
+    }
+
+    /*
+    UPDATE user
+    SET nom = 'estiam'
+    WHERE id = 5
+    */
+    public function update($data){
+        $this->sql = "UPDATE ".$this->table." SET ";
+        $this->params = $data;
+        $where = "";
+        foreach($data as $k => $v){
+            if($k == "id"){
+                $where .= " WHERE ".$k." = :".$k;
+            }else{
+                $this->sql .= $k." = :".$k.", ";
+            }
+        }
+        $this->sql = substr($this->sql, 0, -2);
+        $this->sql .= $where;
+
+        echo $this->sql;
+        var_dump($this->params);
+        return $result = $this->executeSave();
+    }
+    private function executeSave(){
+        $this->prepare($this->sql);
+        $this->execute($this->params);
+        return $this->stmt->rowCount(); 
+    }
+    public function delete($data){
+        $this->sql = "DELETE FROM ".$this->table." WHERE id = :id";
+        $this->params = $data;
+        $result = $this->fetch();
     }
 
     private function prepare(){

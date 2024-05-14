@@ -17,13 +17,29 @@ class UserController{
 
     public function index($id_user){
         var_dump($this);
+        $this->user->delete(['id'=> $id_user]);
+
+
+        /*$counter = $this->user->update([
+            "id" => $id_user,
+            "nom" => "kjniuij",
+            "prenom" => "prenom",
+            "email" => "email@estiam.com",
+            "password" => "ESTIAAAAAAAM",
+
+        ]);
+        echo $counter;*/
+        /*
+        var_dump($this);
         $this->user->insert([
             "nom" => "Telliez",
             "prenom" => "Dominique",
             "email" => "dom@estiam.com",
             "password" => "estiam1234"
 
-        ]);
+        ]);*/
+
+
         /*$this->user->find([
             "id" => $id_user,
             "nom" => "Telliez"
