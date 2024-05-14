@@ -21,6 +21,8 @@ class Router{
         $this->url =array_slice($this->url,2);
         if(count($this->url)>0){
             $this->url_parsed['params']=$this->url;
+        }else{
+            $this->url_parsed['params'][]="";
         }
         //var_dump($this->url_parsed);
         return $this->url_parsed;
