@@ -7,7 +7,7 @@ define("SRC", ROOT.DS."src");
 define("CONTROLLERS", SRC.DS."controllers");
 define("MODELS", SRC.DS."models");
 define("VIEW", SRC.DS."view");
-
+define("TPLS", SRC.DS."templates");
 
 
 //echo MODELS;
