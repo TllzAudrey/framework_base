@@ -6,6 +6,7 @@ class UserController{
         $this->loadModel("user");
     }
     private function loadModel($mdl_name){
+        
         $file_name = $mdl_name."Model";
         if(file_exists(MODELS.DS.$file_name.".php")){
             require_once(MODELS.DS.$file_name.".php");
@@ -16,11 +17,75 @@ class UserController{
     }
 
     public function index($id_user){
-        var_dump($this);
+        $this->loadModel('role');
+        $data = [
+            
+            "libelle" => "admin"
+        ];
+        $this->role->save($data);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*$this->loadModel("role");
+        $this->role->findAll();
+        $this->user->find([
+            "id" => $id_user,
+            "nom" => "Telliez"
+        ]);
+        $this->role->find([
+            "id" => $id_user,
+            "libelle" => "admin"
+        ]);
+
+        $this->user->insert([
+            "nom" => "Telliez",
+            "prenom" => "Dominique",
+            "email" => "dom@estiam.com",
+            "password" => "estiam1234"
+
+        ]);
+        $this->role->insert([
+            "libelle" => "moderator"]);
+        
+        //$this->role->delete(['id'=> $id_user]);
+        //$this->user->delete(['id'=> $id_user]);
+
+        $counter = $this->user->update([
+            "id" => $id_user,
+            "nom" => "kjniuij",
+            "prenom" => "prenom",
+            "email" => "email@estiam.com",
+            "password" => "ESTIAAAAAAAM",
+
+        ]);
+        $counter = $this->role->update([
+            "id" => $id_user,
+            "libelle" => "kjniuij",
+        ]);*/
+       
+    }
+
+}
+
+ /*var_dump($this);
         $this->user->delete(['id'=> $id_user]);
 
 
-        /*$counter = $this->user->update([
+        $counter = $this->user->update([
             "id" => $id_user,
             "nom" => "kjniuij",
             "prenom" => "prenom",
@@ -44,6 +109,3 @@ class UserController{
             "id" => $id_user,
             "nom" => "Telliez"
         ]);*/
-    }
-
-}
