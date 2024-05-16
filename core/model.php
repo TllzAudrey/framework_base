@@ -14,6 +14,7 @@ class Model{
     private $params;
     protected $table;
     protected $fields;
+    protected $requester; 
 
     public function __construct(){
         try {
@@ -24,28 +25,37 @@ class Model{
         if(method_exists($this, "__init")){
             $this->__init();
         }
+        $this->requester = new Requester($this->table, $this->fields);
         //var_dump($this->dbh);
     }
-    public function findAll(){
-        $this->sql = "SELECT * FROM ".$this->table;
-        return $this->execute();
+    public function findAll($fields = "*"){
+        $this->sql = $this->requester->select(['nom','prenom'])
+            ->from('user');
+        
+        //$this->execute();        
     }
+
+    /*     //->from("role")
+            //->from(["role","user"]);
+            //->from()
+            //->Where(['nom'=> 'Telliez']);
+            ->Where(5); // 5 spécifié que c'est une PK
+            echo "<br>";
+            $this->sql = $this->requester->select(['nom','prenom'])
+            ->from("user")
+            ->Where(['nom'=> 'Telliez']);
+            echo "<br>";
+            $this->sql = $this->requester->select(['nom','prenom'])
+            ->from("user")
+            ->Where(['nom'=> 'Telliez','prenom'=> 'Audrey']);
+            //->Where(['nom'=> 'Telliez']);*/
 
 
     public function find($cond){
-        $this->sql = "SELECT * FROM ".$this->table." WHERE ";
-        $this->params = $cond;
-
-        foreach($cond as $key => $value){
-            $this->sql .= $key." = :".$key;
-            if(count($cond)>1){
-                $this->sql .= " AND ";
-            }
-        }
-
-        $this->sql = substr($this->sql, 0, -4);
-        //$result = $this->fetchAll();
-        return $this->execute(true);
+        $this->sql = $this->requester->select(['nom','prenom'])
+            ->from('user')
+            ->where($cond);
+        echo '<br>';
     }
 
     public function save($data){
@@ -62,6 +72,17 @@ class Model{
     }
 
     public function insert($data){
+        $request = $this->requester->insert($data);
+        $this->sql = $request->sql;
+        $this->params = $request->params;
+        
+        echo $this->sql;
+        $this->execute();
+        echo $this->dbh->lastinsertID(); 
+        echo '<br>';
+    }
+    
+        /*
         $this->sql = "INSERT INTO ".$this->table." (";
         $this->params = $data;
         $values = "";
@@ -75,37 +96,50 @@ class Model{
         //echo $this->sql;
         $this->execute();
         return $this->dbh->lastinsertID(); 
-        
-    }
+        */
 
     public function update($data){
-        $this->sql = "UPDATE ".$this->table." SET ";
-        $this->params = $data;
-        $where = "";
-        foreach($data as $k => $v){
-            if($k == "id"){
-                $where .= " WHERE ".$k." = :".$k;
-            }else{
-                $this->sql .= $k." = :".$k.", ";
-            }
-        }
-        $this->sql = substr($this->sql, 0, -2);
-        $this->sql .= $where;
+        $request = $this->requester->update($data);
+        $this->sql = $request->sql;
+        $this->params = $request->params;
+        
+        echo $this->sql;
         
         $this->execute();
         return $this->stmt->rowCount(); 
         
     }
+
+    /*        $this->sql = "UPDATE ".$this->table." SET ";
+            $this->params = $data;
+            $where = "";
+            foreach($data as $k => $v){
+                if($k == "id"){
+                    $where .= " WHERE ".$k." = :".$k;
+                }else{
+                    $this->sql .= $k." = :".$k.", ";
+                }
+            }
+            $this->sql = substr($this->sql, 0, -2);
+            $this->sql .= $where; */
+
 
     public function delete($data){
-        $this->sql = "DELETE FROM ".$this->table." WHERE id = :id";
-        $this->params = $data;
+        $request = $this->requester->delete($data);
+        $this->params = $request->params;
+        $this->sql = $request->sql;
+        var_dump($request);
         $this->execute();
-        return $this->stmt->rowCount(); 
+        //return $this->stmt->rowCount(); 
     }
-
+    /*
+            $this->sql = "DELETE FROM ".$this->table." WHERE id = :id";
+            $this->params = $data;
+            $this->execute();
+            return $this->stmt->rowCount();  */
     private function execute($all = false, $mode = PDO::FETCH_ASSOC){
         $this->stmt = $this->dbh->prepare($this->sql);
+        var_dump($this->stmt);
         $this->stmt->execute($this->params);
         if($all){
             return $this->stmt->fetchAll($mode);

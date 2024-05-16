@@ -1,11 +1,11 @@
 <?php
 #[AllowDynamicProperties]
-class UserController{
+class UserController extends Controller{
 
     public function __construct(){
         $this->loadModel("user");
     }
-    private function loadModel($mdl_name){
+    /*private function loadModel($mdl_name){
         
         $file_name = $mdl_name."Model";
         if(file_exists(MODELS.DS.$file_name.".php")){
@@ -18,11 +18,22 @@ class UserController{
 
     public function index($id_user){
         $this->loadModel('role');
-        $data = [
+        //$this->user->findAll();
+        $this->user->find(['id'=>$id_user,'nom'=> 'Telliez']);
+        /*$this->user->insert(['nom'=> 'Telliez','prenom'=> 'Audrey', 'email'=>'jnhcui@dc.com','password'=>'okvjuishvv']);
+        echo '<br>';
+        $this->user->update(['id'=>$id_user,'nom'=> 'Telliez','prenom'=> 'Audrey', 'email'=>'jnhcui@dc.com','password'=>'okvjuishvv']);
+        echo '<br>';
+        $this->user->delete(['id'=>$id_user]);*/
+
+
+
+
+        /*$data = [
             
             "libelle" => "admin"
         ];
-        $this->role->save($data);
+        $this->role->save($data);*/
 
 
 
@@ -77,8 +88,6 @@ class UserController{
             "libelle" => "kjniuij",
         ]);*/
        
-    }
-
 }
 
  /*var_dump($this);
