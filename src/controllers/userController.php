@@ -1,15 +1,11 @@
 <?php
+#[AllowDynamicProperties]
+class UserController extends Controller{
 
-class UserController{
 
-    private $vars;
-    private $tpl = "default";
+    /*private function loadModel($mdl_name){
+        
 
-    public function __construct(){
-        echo "user controller";
-    }
-
-    private function loadModel($mdl_name){
         $file_name = $mdl_name."Model";
         if(file_exists(MODELS.DS.$file_name.".php")){
             require_once(MODELS.DS.$file_name.".php");
@@ -17,7 +13,7 @@ class UserController{
             echo "Le modèle n'éxiste pas.";
         }
         $this->$mdl_name = new $file_name();
-    }
+    }*/
 
     private function render($view){
         ob_start();
@@ -61,46 +57,6 @@ class UserController{
 
 
     public function index($id_user){
-
-
-        $user = $this->user->findAll();
-        $this->set("title","User Index");
-        $this->set("user",$user);
-        $this->render("index");
-        //var_dump($this);
-
-        /*DELETE function : 
-
-        $this->user->delete(['id'=> $id_user]);
-        */
-
-        /*UPDATE function : 
-        
-        $counter = $this->user->update([
-            "id" => $id_user,
-            "nom" => "kjniuij",
-            "prenom" => "prenom",
-            "email" => "email@estiam.com",
-            "password" => "ESTIAAAAAAAM",
-
-        ]);
-        echo $counter;*/
-        /*INSERT function : 
-  
-        var_dump($this);
-        $this->user->insert([
-            "nom" => "Telliez",
-            "prenom" => "Dominique",
-            "email" => "dom@estiam.com",
-            "password" => "estiam1234"
-
-        ]);*/
-
-
-        /*$this->user->find([
-            "id" => $id_user,
-            "nom" => "Telliez"
-        ]);*/
+        var_dump($this->user);
     }
-
 }
