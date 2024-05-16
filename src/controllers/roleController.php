@@ -1,6 +1,6 @@
 <?php
 
-class RoleController extends Controller{
+class roleController extends Controller{
     public function __init(){
         //echo "init";
     }

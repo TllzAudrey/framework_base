@@ -1,19 +1,6 @@
 <?php
 #[AllowDynamicProperties]
-class UserController extends Controller{
-
-
-    /*private function loadModel($mdl_name){
-        
-
-        $file_name = $mdl_name."Model";
-        if(file_exists(MODELS.DS.$file_name.".php")){
-            require_once(MODELS.DS.$file_name.".php");
-        }else{
-            echo "Le modèle n'éxiste pas.";
-        }
-        $this->$mdl_name = new $file_name();
-    }*/
+class userController extends Controller{
 
     private function render($view){
         ob_start();

@@ -1,6 +1,6 @@
 <?php
 
-class UserModel extends Model {
+class userModel extends Model {
     private $dbh = null;
     private $sql;
 

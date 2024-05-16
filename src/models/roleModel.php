@@ -1,6 +1,6 @@
 <?php
 
-class RoleModel extends Model {
+class roleModel extends Model {
 
     public function __init(){
         $this->table = "role";
