@@ -1,35 +1,38 @@
 <?php
 
 class userModel extends Model {
-    private $dbh = null;
-    private $sql;
-
-    
-
-    public function __init(){
-        $this->table = "user";
+    public function __init()
+    {
+        $this->table = 'user';
         $this->fields = [
-            "id"=>[
-                "type"=>"int",
+            "id" => [
+                "type" => "int",
                 "index" => "PK",
-                "size" => 11
-            ], 
-            "nom"=>[
-                "type"=>"varchar",
-                "size" => 60
-            ], 
-            "prenom"=>[
-                "type"=>"varchar",
-                "size" => 60
-            ], 
-            "email"=>[
-                "type"=>"varchar",
-                "size" => 60
-            ], 
-            "password"=>[
-                "type"=>"varchar",
-                "size" => 60
-            ] ];
+                "size" => 11,
+                "is_PK" => true
+            ],
+            "nom" => [
+                "type" => "varchar",
+                "size" => 50
+            ],
+            "prenom" => [
+                "type" => "varchar",
+                "size" => 50
+            ],
+            "email" => [
+                "type" => "varchar",
+                "size" => 100
+            ],
+            "password" => [
+                "type" => "varchar",
+                "size" => 255
+            ],
+            "id_role" =>[
+                "type" => "int",
+                "size" => 11,
+                "is_FK" => true
+            ]
+        ];
     }
 
 }

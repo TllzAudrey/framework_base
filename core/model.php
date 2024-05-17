@@ -1,6 +1,6 @@
-<?php
+<?php 
 
-class Model{
+class Model {
 
     private $DB_USER = "root";
     private $DB_HOST = "localhost";
@@ -8,143 +8,93 @@ class Model{
     private $DB_NAME = "framework_base";
     private $DB_PORT = 3306;
 
-    private $dbh ;
+    private $dbh;
     private $sql;
-    private $stmt;
-    private $params;
     protected $table;
+    protected $stmt;
+    protected $params = [];
     protected $fields;
-    protected $requester; 
+    protected $requester;
+    protected $relations;
 
-    public function __construct(){
+    public function __construct()   
+    {
         try {
-            $this->dbh = new PDO('mysql:host='.$this->DB_HOST.';port='.$this->DB_PORT.';dbname='.$this->DB_NAME, $this->DB_USER, $this->DB_PASS);
+            $this->dbh = new PDO('mysql:host='.$this->DB_HOST.';dbname='.$this->DB_NAME.';port='.$this->DB_PORT, $this->DB_USER, $this->DB_PASS);
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
-        if(method_exists($this, "__init")){
+
+        if(method_exists($this, "__init")) {
             $this->__init();
         }
+
         $this->requester = new Requester($this->table, $this->fields);
-        //var_dump($this->dbh);
-    }
-    public function findAll($fields = "*"){
-        $this->sql = $this->requester->select(['nom','prenom'])
-            ->from('user');
-        
-        //$this->execute();        
     }
 
-    /*     //->from("role")
-            //->from(["role","user"]);
-            //->from()
-            //->Where(['nom'=> 'Telliez']);
-            ->Where(5); // 5 spécifié que c'est une PK
-            echo "<br>";
-            $this->sql = $this->requester->select(['nom','prenom'])
-            ->from("user")
-            ->Where(['nom'=> 'Telliez']);
-            echo "<br>";
-            $this->sql = $this->requester->select(['nom','prenom'])
-            ->from("user")
-            ->Where(['nom'=> 'Telliez','prenom'=> 'Audrey']);
-            //->Where(['nom'=> 'Telliez']);*/
+    public function findAll($config = [], $fields = "*")
+    {
+        $this->requester->select($fields)
+            ->from();
+            
+        if(!empty($config)) {
+            $this->requester->join($config);
+        }
+        return $this->execute(true);
+    }
 
-
-    public function find($cond){
-        $this->sql = $this->requester->select(['nom','prenom'])
-            ->from('user')
+    public function find($cond, $fields = "*")
+    {
+        $this->requester->select($fields)
+            ->from()
             ->where($cond);
-        echo '<br>';
+        return $this->execute();
+        
     }
 
-    public function save($data){
-        $data_key = array_keys($data);
-        foreach($data_key as $k){
-            if(isset($this->fields[$k]['index'])&& $this->fields[$k]['index'] == "PK"){
-                echo "oui" ;
-                return $this->update($data);
-            }else{
-                echo "non" ;
-                return $this->insert($data);
-            }
+    public function save($data) {
+        
+        var_dump($data);
+        if( isset($data[$this->requester->getPrimaryKey()])) {
+            return $this->update($data);
+        } else {
+            return $this->insert($data);
         }
     }
 
-    public function insert($data){
-        $request = $this->requester->insert($data);
-        $this->sql = $request->sql;
-        $this->params = $request->params;
-        
-        echo $this->sql;
-        $this->execute();
-        echo $this->dbh->lastinsertID(); 
-        echo '<br>';
-    }
-    
-        /*
-        $this->sql = "INSERT INTO ".$this->table." (";
+    public function insert($data) 
+    {
+        $this->requester->insert();
         $this->params = $data;
-        $values = "";
-        foreach($data as $k => $v){
-            $this->sql .= $k.", ";
-            $values .= ":".$k.", ";
-        }
-        $this->sql = substr($this->sql, 0, -2);
-        $values = substr($values, 0, -2);
-        $this->sql .= ") VALUES(".$values.")";
-        //echo $this->sql;
         $this->execute();
-        return $this->dbh->lastinsertID(); 
-        */
-
-    public function update($data){
-        $request = $this->requester->update($data);
-        $this->sql = $request->sql;
-        $this->params = $request->params;
-        
-        echo $this->sql;
-        
-        $this->execute();
-        return $this->stmt->rowCount(); 
-        
+        return $this->dbh->lastInsertId();
     }
 
-    /*        $this->sql = "UPDATE ".$this->table." SET ";
-            $this->params = $data;
-            $where = "";
-            foreach($data as $k => $v){
-                if($k == "id"){
-                    $where .= " WHERE ".$k." = :".$k;
-                }else{
-                    $this->sql .= $k." = :".$k.", ";
-                }
-            }
-            $this->sql = substr($this->sql, 0, -2);
-            $this->sql .= $where; */
-
-
-    public function delete($data){
-        $request = $this->requester->delete($data);
-        $this->params = $request->params;
-        $this->sql = $request->sql;
-        var_dump($request);
+    public function update($data) 
+    {
+        $this->requester->update();
+        $this->params = $data;
         $this->execute();
-        //return $this->stmt->rowCount(); 
+        return $this->stmt->rowCount();
     }
-    /*
-            $this->sql = "DELETE FROM ".$this->table." WHERE id = :id";
-            $this->params = $data;
-            $this->execute();
-            return $this->stmt->rowCount();  */
-    private function execute($all = false, $mode = PDO::FETCH_ASSOC){
-        $this->stmt = $this->dbh->prepare($this->sql);
-        var_dump($this->stmt);
-        $this->stmt->execute($this->params);
-        if($all){
+
+    public function delete($data)
+    {
+        $this->requester->delete()->from()->where($data);
+        $this->execute();
+        return $this->stmt->rowCount();
+    }
+
+    private function execute($all = false, $mode = PDO::FETCH_ASSOC)
+    {
+        $this->stmt = $this->dbh->prepare($this->requester->getRequest());
+        $this->stmt->execute(empty($this->params)?$this->requester->getParams():$this->params);
+        if($all) {
             return $this->stmt->fetchAll($mode);
-        }else{
+        } else {
             return $this->stmt->fetch($mode);
         }
-    } 
+        
+    }
+
 }

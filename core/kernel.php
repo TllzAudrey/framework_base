@@ -1,28 +1,31 @@
 <?php
-//namespace Core\Kernel;
-//use Core\Routeur;
 
-class Kernel{
+
+class Kernel {
+
     private $url_parsed;
-    public function __construct(){
-        //echo "kernel";
+
+    public function __construct() 
+    {
         $router = new Router();
-        //$router->parse();
         $this->url_parsed = $router->parse();
         $this->run();
     }
-    private function run(){
-        $ctrlname = $this->url_parsed["controller"]."Controller";
-        $this->loadController($ctrlname);
-        $ctrl = new $ctrlname();
-        call_user_func_array(array($ctrl,$this->url_parsed['action']),$this->url_parsed['params']?$this->url_parsed['params']:array());
+
+    private function run()
+    {
+        $ctrl_name = $this->url_parsed["controller"]."Controller";
+        $this->loadController($ctrl_name);
+        $ctrl = new $ctrl_name();
+        call_user_func_array(array($ctrl, $this->url_parsed['action']), $this->url_parsed['params']?$this->url_parsed['params']:array());
     }
-    private function loadController($ctrlname){
-        //echo CONTROLLERS.DS.$ctrl;
-        if(file_exists(CONTROLLERS.DS.$ctrlname.".php")){
-            require_once(CONTROLLERS.DS.$ctrlname.".php");
-        }else{
-            echo "Erreur 404";
+
+    private function loadController($ctrl_name)
+    {
+        if(file_exists(CONTROLLERS.DS.$ctrl_name.".php")) {
+            require_once(CONTROLLERS.DS.$ctrl_name.".php");
+        } else {
+            echo "erreur 404";
         }
     }
 }

@@ -1,49 +1,35 @@
 <?php
+
 #[AllowDynamicProperties]
-class userController extends Controller{
+class userController extends Controller {
 
-    private function render($view){
-        ob_start();
-        extract($this->vars);
-        if(file_exists(VIEW.DS.$view.".php")){
-            require_once(VIEW.DS.$view.".php");
-        }else{
-            echo "La view n'éxiste pas.";
-        }
-        $content_for_layout = ob_get_contents();
-        ob_end_clean();
-        if(file_exists(TPLS.DS.$this->tpl.".php")){
-            require_once(TPLS.DS.$this->tpl.".php");
-        }else{
-            echo "La view n'éxiste pas.";
-        }
 
+    public function index() {
+        $this->set("users",$this->user->findAll([
+            'relation' => 'role',
+            'field' => 'id_role'
+        ]));
+        $this->render();
     }
-
-    private function set($name,$var){
-            $this->vars[$name]= $var;
-        //var_dump($this->vars);
-    }
-
-
-    private function css($ar){
-        foreach($ar as $v){
-            echo '<link rel="stylesheet" href="\\assets\css\\'.$v.'">';
-        }
-        //var_dump($ar);
-    }
-
     
-    private function js($ar){
-        foreach($ar as $v){
-            echo '<script src="\\assets\js\\'.$v.'"></script>';
+    public function add() {
+        $this->loadModel('role');
+        $this->set("roles",$this->role->findAll());
+        if(!empty($_POST)){
+            $this->user->save($_POST);
         }
-        //var_dump($ar);
+        $this->render();
+    }
+    public function edit($id_user) {
+        $this->loadModel('role');
+        $this->set("roles",$this->role->findAll());
+        $this->set("user",$this->user->find($id_user));
+        if(!empty($_POST)){
+            $this->user->save($_POST);
+        }
+
+        $this->render();
+
     }
 
-
-
-    public function index($id_user){
-        var_dump($this->user);
-    }
 }
